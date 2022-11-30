@@ -11,19 +11,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@SequenceGenerator(name = "seq_telefone", sequenceName = "seq_telefone", allocationSize = 1, initialValue = 1)
 public class Telefone implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_telefone")
 	private Long id;
 	private String numero;
 
 	@JsonIgnore
 	@ForeignKey(name = "usuario_id")
-	@ManyToOne()
+	@ManyToOne(optional = false)
 	private Usuario usuario;
 
 	public Telefone() {
