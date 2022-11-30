@@ -10,10 +10,11 @@
 	<groupId>com.restfull.jdev</groupId>
 	<artifactId>restfull-jdev</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>restfull-jdev</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

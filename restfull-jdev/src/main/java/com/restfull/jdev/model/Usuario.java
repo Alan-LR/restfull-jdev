@@ -1,11 +1,15 @@
 package com.restfull.jdev.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Usuario implements Serializable{
@@ -17,6 +21,10 @@ public class Usuario implements Serializable{
 	private String nome;
 	private String login;
 	private String senha;
+	
+	//orphanRemoval = quando deletarmos usuário deletamos seus telefones
+	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Telefone> telefones = new ArrayList<Telefone>();
 
 	public Usuario() {
 	}
