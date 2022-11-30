@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.hibernate.annotations.ForeignKey;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +21,7 @@ public class Telefone implements Serializable {
 	private Long id;
 	private String numero;
 
+	@JsonIgnore
 	@ForeignKey(name = "usuario_id")
 	@ManyToOne()
 	private Usuario usuario;
