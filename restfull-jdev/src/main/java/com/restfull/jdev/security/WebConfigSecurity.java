@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -15,38 +16,52 @@ import com.restfull.jdev.service.ImplementacaoUserDetailsService;
 /*Mapeia URL, enderecos, autoriza ou bloqueia o acesso a URL*/
 @Configuration
 @EnableWebSecurity
-public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
-	
-	@Autowired
-	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
+public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
 
-	/*Configura as solicitacoes de acesso por HTTP*/
+	@Autowired
+	private ImplementacaoUserDetailsService implementacaoUserDetailsSercice;
+
+	/* Configura as solicitações de acesso por Http */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-	    /*Ativando a proteção contra usuários que não estão validados por token*/
+
+		/* Ativando a proteção contra usuário que não estão validados por TOKEN */
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-		/*Ativando a permissão para TODOS acessarem a página inicial do sistema*/
-		.disable().authorizeRequests().antMatchers("/").permitAll()
-		.antMatchers("/index").permitAll()
-		
-		/*URL de logout - Redireciona após o user deslogar do sistema*/
-		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
-		
-		/*Mapeia URL de logout e invalida o usuário*/
-		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
-		
-		/*Filtra requisições de login para autenticação*/
-		
-		
-		/*Filtra demais requisições para verificar a presença do token JWT no header HTTP*/
+
+				/*
+				 * Ativando a permissão para acesso a página incial do sistema EX:
+				 * sistema.com.br/index
+				 */
+				.disable().authorizeRequests().antMatchers("/").permitAll().antMatchers("/index").permitAll()
+
+				/* URL de Logout - Redireciona após o user deslogar do sistema */
+				.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
+
+				/* Maperia URL de Logout e insvalida o usuário */
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+
+				/* Filtra requisições de login para autenticação */
+				.and()
+				.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
+						UsernamePasswordAuthenticationFilter.class)
+
+				/*
+				 * Filtra demais requisições paa verificar a presenção do TOKEN JWT no HEADER
+				 * HTTP
+				 */
+				.addFilterBefore(new JWTApiAutenticacaoFilter(), UsernamePasswordAuthenticationFilter.class);
+
 	}
-	
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		/*Service que irá consultar o usuário no banco de dados*/
-		auth.userDetailsService(implementacaoUserDetailsService)
-		/*Padrão de codificação de senha*/
-		.passwordEncoder(new BCryptPasswordEncoder());
+
+		/* Service que irá consultar o usuário no banco de dados */
+		auth.userDetailsService(implementacaoUserDetailsSercice)
+
+				/* Padrão de codigição de senha */
+				.passwordEncoder(new BCryptPasswordEncoder());
+
 	}
 
 }
