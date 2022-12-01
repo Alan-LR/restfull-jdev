@@ -1,4 +1,4 @@
-package com.restfull.controller;
+package com.restfull.jdev.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
